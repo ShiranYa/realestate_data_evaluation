@@ -6,7 +6,7 @@ from utils.utils import random_dates
 
 
 def get_raw_data_from_csv():
-	df_raw = pd.read_csv('csv_real_estate_files/realtor-data.csv')
+	df_raw = pd.read_csv('csv_real_estate_files/parsed_content.csv')
 	np.random.seed(0)
 	start = pd.to_datetime('2015-01-01')
 	end = pd.datetime.now()
