@@ -1,0 +1,4 @@
+#ignore all the virtual envs files.
+*.env
+
+.idea
