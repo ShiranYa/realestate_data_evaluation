@@ -3,8 +3,10 @@ import requests
 import json
 import logging
 import csv
+from fetch_and_parse_data.areas_enum import Geo_areas
 
-def get_for_sale_content_by_params(top_area,area,rooms,sqr_meter):
+
+def get_for_sale_content_by_params(area_name: Geo_areas, rooms, sqr_meter):
 	# url= f'https://gw.yad2.co.il/feed-search-legacy/realestate/forsale?topArea=25&area=5&propertyGroup=apartments&rooms=4-4&squaremeter=120-120&forceLdLoad=true'
 	url= f'https://gw.yad2.co.il/feed-search-legacy/realestate/forsale?topArea={top_area}&area={area}&propertyGroup=apartments&rooms={rooms}-{rooms}&squaremeter={sqr_meter}-{sqr_meter}&forceLdLoad=true'
 	res= requests.request('GET', url)
@@ -30,11 +32,12 @@ def is_parse_raw_content_and_inject_csv(content):
 	if not is_valid:
 		logging.info('Content is not vaild')
 		return False
-	feed_items= content.get('data').get('feed').get('feed_items')
-	with open('csv_real_estate_files/parsed_content.csv','w+',encoding='UTF8') as p:
-		writer= csv.writer(p)
-		cols_names=['ad_id','city_name','street_name','date_last_updated','date_first_added','price','floor_num','rooms_num','sqr_meter',
-					'primary_area_id','area_id','city_code','deal_info']
+	feed_items = content.get('data').get('feed').get('feed_items')
+	with open('../csv_real_estate_files/parsed_content.csv', 'w+', encoding='UTF8') as p:
+		writer = csv.writer(p)
+		cols_names = ['ad_id', 'city_name', 'street_name', 'date_last_updated', 'date_first_added', 'price',
+					  'floor_num', 'rooms_num', 'sqr_meter',
+					  'primary_area_id', 'area_id', 'city_code', 'deal_info']
 
 		# writes the header of the csv file
 		writer.writerow(cols_names)
