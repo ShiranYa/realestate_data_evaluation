@@ -51,11 +51,11 @@ def is_parse_raw_content_and_inject_csv(content):
 			price = item.get('price').replace(',', '').replace(' ', '')[:-1] if item.get('price') is not None else None
 			# parse the floor level out of the text ignoring all text
 			floor_num_str= item.get('line_2')
-			floor_num = re.findall('[0-9]+', floor_num_str)[0] if floor_num_str is not None and re.match('[0-9]+', floor_num_str) else None
+			floor_num = re.findall('[0-9]+', floor_num_str)[0] if floor_num_str is not None and re.search('[0-9]+',floor_num_str) else None
 			rooms_num = item.get('Rooms_text')
 			sqr_meter = item.get('square_meters')
 			primary_area_id= item.get('PrimaryAreaID')
-			area_id=item.get('areaID')
+			area_id=item.get('area_id')
 			city_code=item.get('city_code')
 			deal_info= item.get('deal_info')
 
