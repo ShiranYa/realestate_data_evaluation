@@ -2,7 +2,7 @@ from enum import Enum
 
 class geo_areas(Enum):
 	# (toparea,area)
-	HIFA= (25,5)
+	HAIFA= (25,5)
 	TEL_AVIV=(2,1)
 	JERUSALEM=(100,7)
 	RAMAT_GAN_GIVATAYM=(2,3)
