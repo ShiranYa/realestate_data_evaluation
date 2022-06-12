@@ -48,7 +48,7 @@ def is_parse_raw_content_and_inject_csv(content):
 			date_last_updated = item.get('date')
 			date_first_added= item.get('date_added')
 			# parse the price to have only number without spaces or other
-			price = item.get('price').replace(',', '').replace(' ', '')[:-1] if item.get('price') is not None else None
+			price = item.get('price').replace(',', '').replace(' ', '')[:-1] if item.get('price') and re.search('[0-9]+',item.get('price')) is not None else None
 			# parse the floor level out of the text ignoring all text
 			floor_num_str= item.get('line_2')
 			floor_num = re.findall('[0-9]+', floor_num_str)[0] if floor_num_str is not None and re.search('[0-9]+',floor_num_str) else None
