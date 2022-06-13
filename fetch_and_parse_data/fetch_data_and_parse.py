@@ -1,21 +1,34 @@
 import re
 import requests
 import json
-import logging
 import csv
 from fetch_and_parse_data.areas_enum import Geo_areas
 
+import logging
 
-def get_for_sale_content_by_params(area_name: Geo_areas, rooms, sqr_meter):
-	# url= f'https://gw.yad2.co.il/feed-search-legacy/realestate/forsale?topArea=25&area=5&propertyGroup=apartments&rooms=4-4&squaremeter=120-120&forceLdLoad=true'
-	url= f'https://gw.yad2.co.il/feed-search-legacy/realestate/forsale?topArea={top_area}&area={area}&propertyGroup=apartments&rooms={rooms}-{rooms}&squaremeter={sqr_meter}-{sqr_meter}&forceLdLoad=true'
-	res= requests.request('GET', url)
-	# return as dict the raw response
-	return json.loads(res.content.decode("UTF_8"))
-	# with open('file.txt') as f:
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
+
+
+def get_for_sale_content_by_params(area_name, rooms, sqr_meter):
+	try:
+		top_area, area = Geo_areas[area_name].value
+		url = f'https://gw.yad2.co.il/feed-search-legacy/realestate/forsale?topArea={top_area}&area={area}&propertyGroup=apartments&rooms={rooms}-{rooms}&squaremeter={sqr_meter}-{sqr_meter}&forceLdLoad=true'
+		res = requests.request('GET', url)
+		# return as dict the raw response
+		return json.loads(res.content.decode("UTF_8"))
+
+	# for test if url changes
+	# with open('csv_real_estate_files/file.txt') as f:
 	# 	return json.loads(f.read())
+	except Exception as e:
+		logging.error(f'GET request for url has failed \n error: {e}')
+		return None
+
 
 def is_content_valid(content):
+	if not content:
+		logging.error('content is empty or None')
+		return False
 	if not content.get('data'):
 		logging.error('Object response has changed- no data to parse')
 		return False
@@ -27,13 +40,14 @@ def is_content_valid(content):
 		return False
 	return True
 
+
 def is_parse_raw_content_and_inject_csv(content):
-	is_valid= is_content_valid(content)
+	is_valid = is_content_valid(content)
 	if not is_valid:
 		logging.info('Content is not vaild')
 		return False
 	feed_items = content.get('data').get('feed').get('feed_items')
-	with open('../csv_real_estate_files/parsed_content.csv', 'w+', encoding='UTF8') as p:
+	with open('csv_real_estate_files/parsed_content.csv', 'w+', encoding='UTF8') as p:
 		writer = csv.writer(p)
 		cols_names = ['ad_id', 'city_name', 'street_name', 'date_last_updated', 'date_first_added', 'price',
 					  'floor_num', 'rooms_num', 'sqr_meter',
@@ -66,13 +80,4 @@ def is_parse_raw_content_and_inject_csv(content):
 			writer.writerow([ad_id,city_name,street_name,date_last_updated,date_first_added,price,floor_num,rooms_num,sqr_meter,primary_area_id,area_id,city_code,deal_info])
 		logging.info('all records were injected to csv')
 	return True
-
-
-
-if __name__ == '__main__':
-	content= get_for_sale_content_by_params()
-	print(is_parse_raw_content_and_inject_csv(content))
-	i = 0
-	# map of ares:
-	# top area + area nums : haifa top 25, area:5
 

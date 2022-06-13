@@ -1,8 +1,11 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
-# from sklearn.linear_model import LinearRegression
-import numpy as np
+from datetime import datetime
+
+import logging
+
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 
 def get_clean_data():
@@ -56,40 +59,20 @@ def generate_evaluation_summary_text(df: pd.DataFrame, proparty_params):
 	sqr_meter = proparty_params.get('sqr_meter')
 	roomNum = proparty_params.get('rooms_num')
 
-	text = f'Evaluation Summary: \n' \
-		   f'Propary Description:\nLocation: {location}\nSqrMeter Size: {sqr_meter}\nNumber of Rooms:{roomNum} \n\n' \
+	text = f'Evaluation Summary: {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}\n' \
+		   f'Propary Description:\nLocation: {location}\nSqrMeter Size: {sqr_meter}\nNumber of Rooms:{roomNum}\n\n' \
 		   f'your avg price of the proparty is: {round_avg}\n\nThe evaluation is based on yad2.co.il website'
 	return text
 
 
-def create_pdf(df: pd.DataFrame, proparty_params):
-	with PdfPages('property_evaluation.pdf') as pdf:
-		text = generate_evaluation_summary_text(df, proparty_params)
-		add_text_to_pdf(text, 20, 0.2, 0.3, pdf)
-		create_plot_by_price_and_date(df, pdf)
-		create_plot_by_price_and_floor_num(df, pdf)
-
-
-if __name__ == '__main__':
-	df = get_clean_data()
-
-	from fetch_and_parse_data.areas_enum import Geo_areas
-
-	create_pdf(df, {'area_name': Geo_areas["HAIFA"].name, 'rooms_num': 4, "sqr_meter": 120})
-
-	i = 0
-# df_raw = get_raw_data_from_csv_as_df()
-#
-# df_raw = df_raw.dropna()
-# X = df_raw[['bed', 'house_size']]
-# y = df_raw['price']
-#
-# model = LinearRegression()
-#
-# model.fit(X, y)
-#
-# model_prdict = model.predict(X)
-#
-# df_raw['model_result'] = model_prdict
-#
-# plt.scatter(df_raw['bed'], df_raw['price'])
+def is_create_pdf(df: pd.DataFrame, proparty_params):
+	try:
+		with PdfPages('property_evaluation.pdf') as pdf:
+			text = generate_evaluation_summary_text(df, proparty_params)
+			add_text_to_pdf(text, 20, 0.2, 0.3, pdf)
+			create_plot_by_price_and_date(df, pdf)
+			create_plot_by_price_and_floor_num(df, pdf)
+		return True
+	except Exception as e:
+		logging.error('failed to create pdf')
+		return False
