@@ -1,7 +1,10 @@
+import logging
 from fetch_and_parse_data.fetch_data_and_parse import get_for_sale_content_by_params, \
 	is_parse_raw_content_and_inject_csv
 from pd_data_processing import is_create_pdf, get_clean_data
 import re
+
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 
 def is_params_valid(params):
@@ -15,6 +18,7 @@ def is_params_valid(params):
 
 def is_evaluation_succeeded(params):
 	if not is_params_valid(params):
+		logging.error('URL params are not valid')
 		return False
 
 	content = get_for_sale_content_by_params(params.get('area_name').upper(),

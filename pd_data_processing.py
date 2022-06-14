@@ -2,7 +2,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 from datetime import datetime
-
 import logging
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -13,14 +12,15 @@ def get_clean_data():
 	df.drop_duplicates('ad_id')
 	# remove all rows with null price
 	df = df[df['price'].notnull()]
-	df['date_last_updated'] = pd.to_datetime(df.date_last_updated)
+	df['date_first_added'] = pd.to_datetime(df.date_last_updated)
+	logging.info('real_estate cleaned')
 	return df
 
 
 def create_plot_by_price_and_date(df: pd.DataFrame, pdf: PdfPages):
 	fig = plt.figure(figsize=(9, 5))
 	plt.title('Price by Month')
-	df.set_index('date_last_updated').resample('1M')['price'].mean().plot()
+	df.set_index('date_first_added').resample('1M')['price'].mean().plot()
 	pdf.savefig()
 	plt.close()
 
@@ -72,6 +72,7 @@ def is_create_pdf(df: pd.DataFrame, proparty_params):
 			add_text_to_pdf(text, 20, 0.2, 0.3, pdf)
 			create_plot_by_price_and_date(df, pdf)
 			create_plot_by_price_and_floor_num(df, pdf)
+		logging.info('Pdf file was created')
 		return True
 	except Exception as e:
 		logging.error('failed to create pdf')
