@@ -17,9 +17,6 @@ def get_for_sale_content_by_params(area_name, rooms, sqr_meter):
 		# return as dict the raw response
 		return json.loads(res.content.decode("UTF_8"))
 
-	# for test if url changes
-	# with open('csv_real_estate_files/file.txt') as f:
-	# 	return json.loads(f.read())
 	except Exception as e:
 		logging.error(f'GET request for url has failed \n error: {e}')
 		return None

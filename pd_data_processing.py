@@ -60,8 +60,8 @@ def generate_evaluation_summary_text(df: pd.DataFrame, proparty_params):
 	roomNum = proparty_params.get('rooms_num')
 
 	text = f'Evaluation Summary: {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}\n' \
-		   f'Propary Description:\nLocation: {location}\nSqrMeter Size: {sqr_meter}\nNumber of Rooms:{roomNum}\n\n' \
-		   f'your avg price of the proparty is: {round_avg}\n\nThe evaluation is based on yad2.co.il website'
+		   f'Proparty Description:\nLocation: {location}\nSqrMeter Size: {sqr_meter}\nNumber of Rooms:{roomNum}\n\n' \
+		   f'Your proparty avg price is: {round_avg}'
 	return text
 
 
